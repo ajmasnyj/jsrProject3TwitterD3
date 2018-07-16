@@ -53,7 +53,7 @@ var data = arrayTweets;
 var width = 420;
 var barHeight = 20;
 
-var x = d3.scale.linear()
+var x = d3.scaleLinear()
     .range([0, width])
 
 var chart = d3.select(".chart")
