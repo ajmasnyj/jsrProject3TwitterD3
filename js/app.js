@@ -46,26 +46,77 @@ for (j = 9; j < 16; j++){
 
 }
 
-// D3
+console.log(arrayTweets);
 
+// D3
+// key value pair in JSON date and number of times
 var data = arrayTweets;
 
-var width = 420;
-var barHeight = 20;
+// set margin of SVG
+var margin = {top: 50, right: 50, bottom: 50, left: 50};
+// set the width and height using current width and height of div
+var width = 600 - margin.left - margin.right;
+var height = 600 - margin.top - margin.bottom;
 
-var x = d3.scaleLinear()
-    .range([0, width])
+// create SVG and append to visualization div
+var svg = d3.select("#visualization").append("svg")
+  .attr("width", width + margin.left + margin.right)
+  .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+  .attr("transform",
+        "translate(" + margin.left + "," + margin.top + ")");
 
-var chart = d3.select(".chart")
-    .attr("width", width);
+// set up scales of data
+// svg coordinates start at 0,0 in the top left corner. switch range parameters
+// set ranges
+var x = d3.scaleBand()
+  .range([0,width]);
 
-// key value pair in JSON date and number of times
-var bars = d3.select(".bars")
-    .selectAll("div").data(data)
+var y = d3.scaleLinear()
+    .range([height, 0])
 
-bars.append("div")
-    .style("width", function(d) { return x(d) + "px"; })
-    .text(function(d) { return d; })
-.style("color", function(d) {
-  return d.value;
+d3.something(data, function(error, data) {
+
+  // format the data
+  data.forEach(function(d) {
+    d.PlacehoderDate = +d.PlaceholderDate;
+  });
+
+// create individual bars
+// doamin tells D3 the range of data to expect
+// x axis is mapping the dates
+// y axis is number of tweets, 0 to max
+  // scale the range of data in domain
+  x.domain(data.map(function(d) { return d.PlaceholderTweets; }));
+  y.domain([0, d3.max(data, function(d) { return d.PlaceholderDate; })]);
+
+// create the bars with SVG rectange elements
+// use the x and y positions using variables above
+// set width and height of bars
+  svg.selectAll(".bar")
+    .data(data)
+    .enter().append("rect")
+    .attr("class", "bar")
+    .attr("x", function(d) { return x(d.PlaceholderDate); })
+    .attr("width", x.bandwidth())
+    .attr("y", function(d) { return y(d.PlaceholderTweets); })
+    .attr("height", function(d) { return height - y(d.PlaceholderTweets); });
+
+  svg.append("g")
+    .attr("transform", "translate(0," + height + ")")
+    .call(d3.axisBottom(x));
+
 });
+
+// var chart = d3.select(".chart")
+//     .attr("width", width);
+//
+// var bars = d3.select(".bars")
+//     .selectAll("div").data(data)
+//
+// bars.append("div")
+//     .style("width", function(d) { return x(d) + "px"; })
+//     .text(function(d) { return d; })
+// .style("color", function(d) {
+//   return d.value;
+// });
