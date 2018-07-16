@@ -47,23 +47,25 @@ for (j = 9; j < 16; j++){
 }
 
 // D3
-// key value pair in JSON date and number of times
+
 var data = arrayTweets;
-var x = d3.scale.linear();
-    // .domain([0, d3.max(data)])
-    // .range([0, 420])
 
-var bars = d3.select(".bars");
-// .selectAll("div").data(data)
+var width = 420;
+var barHeight = 20;
 
-var map = d3.select(".map");
-// .selectAll("div").data(data);
+var x = d3.scale.linear()
+    .range([0, width])
 
-bars.enter().append("div")
+var chart = d3.select(".chart")
+    .attr("width", width);
+
+// key value pair in JSON date and number of times
+var bars = d3.select(".bars")
+    .selectAll("div").data(data)
+
+bars.append("div")
     .style("width", function(d) { return x(d) + "px"; })
     .text(function(d) { return d; })
-.style("color", function(d, i) {
-  return i % 2 ? "#fff" : "#aaa";
+.style("color", function(d) {
+  return d.value;
 });
-
-bars.exit().remove();
